@@ -1,18 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class Grass {
+  final String commonName;
+  final String cultivar;
+  final String scientificName;
+  final String growthType;
+
+  Grass({this.commonName, this.cultivar, this.scientificName, this.growthType});
+
+  factory Grass.fromJson(Map<String, dynamic> json) {
+    return Grass(
+      commonName: json['commonName'],
+      cultivar: json['cultivar'],
+      scientificName: json['scientificName'],
+      growthType: json['growthType'],
+    );
+  }
+}
+
+Future<Grass> fetchGrass() async {
+  final response = await http.get('http://192.168.1.132:8000/');
+
+  if (response.statusCode == 200) {
+    return Grass.fromJson(jsonDecode(response.body)[0]);
+  } else {
+    throw Exception('Failed to load Data');
+  }
+}
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  MyApp({Key key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Future<Grass> futureGrass;
+
+  @override
+  void initState() {
+    super.initState();
+    futureGrass = fetchGrass();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'GrassDB layout Demo',
         home: Scaffold(
           appBar: AppBar(
-            title: Text('Grass Database'),
+            title: Text('Grass Database Demo'),
             backgroundColor: Colors.green[200],
           ),
           body: ListView(
