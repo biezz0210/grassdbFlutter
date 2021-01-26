@@ -67,8 +67,79 @@ class _MyAppState extends State<MyApp> {
                 height: 240,
                 fit: BoxFit.cover,
               ),
-              titleSection,
-              textSection,
+              Container(
+                padding: const EdgeInsets.all(32),
+                child: Row(
+                  children: [
+                    Expanded(
+                      /*1*/
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // title
+                          Container(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: FutureBuilder<Grass>(
+                              future: futureGrass,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    snapshot.data.commonName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text("${snapshot.error}");
+                                }
+                                return CircularProgressIndicator();
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: FutureBuilder<Grass>(
+                              future: futureGrass,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    snapshot.data.scientificName +
+                                        ', ' +
+                                        snapshot.data.cultivar,
+                                    style: TextStyle(
+                                      color: Colors.grey[500],
+                                    ),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text("${snapshot.error}");
+                                }
+                                return CircularProgressIndicator();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(32),
+                child: FutureBuilder<Grass>(
+                  future: futureGrass,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(
+                        'Growth Type : ' + snapshot.data.growthType,
+                        softWrap: true,
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    return CircularProgressIndicator();
+                  },
+                ),
+              ),
             ],
           ),
         ));
